@@ -1,33 +1,50 @@
-# LILA APM Tech Test: Player Journey Visualizer
+# React + TypeScript + Vite
 
-This repository contains my submission for the LILA BLACK Player Journey Visualization Tool.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## Structure
-- `process_data.py`: Data pipeline constructed in Python utilizing Pandas/PyArrow to flatten 89,000 parquet events down to a unified, optimized JSON format containing localized 2D coordinate projections (`processed_data.json`).
-- `lila-visualizer/`: Vite + React UI rendering application
-- `ARCHITECTURE.md`: Outline of stack choices, design decisions, edge cases, and 2D mapping math methodology.
-- `INSIGHTS.md`: Contains 3 analytical gameplay insights distilled uniquely from using this custom tool.
+Currently, two official plugins are available:
 
-## Running Locally
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-### Step 1: Frontend App
-The app is entirely encapsulated within the `lila-visualizer` project folder, consuming the pre-processed dataset via public assets.
+## Expanding the ESLint configuration
 
-```bash
-cd lila-visualizer
-npm install
-npm run dev
+If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+
+- Configure the top-level `parserOptions` property like this:
+
+```js
+export default tseslint.config({
+  languageOptions: {
+    // other options...
+    parserOptions: {
+      project: ['./tsconfig.node.json', './tsconfig.app.json'],
+      tsconfigRootDir: import.meta.dirname,
+    },
+  },
+})
 ```
 
-Navigate to `http://localhost:5173`. 
+- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
+- Optionally add `...tseslint.configs.stylisticTypeChecked`
+- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
 
-### (Optional) Step 2: Reproducing Data Processing
-If you wish to reprocess the `player_data/` parquet outputs:
-```bash
-python process_data.py
-# This overrides exactly to lila-visualizer/public/processed_data.json
+```js
+// eslint.config.js
+import react from 'eslint-plugin-react'
+
+export default tseslint.config({
+  // Set the react version
+  settings: { react: { version: '18.3' } },
+  plugins: {
+    // Add the react plugin
+    react,
+  },
+  rules: {
+    // other rules...
+    // Enable its recommended rules
+    ...react.configs.recommended.rules,
+    ...react.configs['jsx-runtime'].rules,
+  },
+})
 ```
-
-## Deployment
-Since the data ingestion condenses accurately into a lightweight JSON payload and maps scale accurately over 2D pixels, this React App executes optimally as a static frontend. 
-Simply push `lila-visualizer` to GitHub and import it via Vercel for immediate global accessibility.
